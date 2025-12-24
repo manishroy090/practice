@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Airport;
 use App\Models\ComissionRule;
 use Illuminate\Support\Facades\Validator;
+use App\Events\TestEvent;
 
 class ComissionController extends Controller
 {
@@ -24,7 +25,8 @@ class ComissionController extends Controller
                 'totalcommissionrule'=>ComissionRule::count(),
                 'message' => "fetch successfully"
             ];
-
+           
+        
             $code = 200;
         } catch (\Throwable $th) {
 
@@ -77,12 +79,14 @@ class ComissionController extends Controller
                 $data['rows'][$key]['destination'] =  json_encode($value['destination']);
                }
                 ComissionRule::insert($data['rows']);
+                //  event(new TestEvent("Commission rule is created"));
+                TestEvent::dispatch('Commission rule is created');
                 $code = 201;
                 $response = [
                     'message' => "Commission Rule created successfully"
                 ];
             } catch (\Throwable $th) {
-               
+              
                 $code = 500;
                 $response = [
                     'message' =>$th->getMessage()
